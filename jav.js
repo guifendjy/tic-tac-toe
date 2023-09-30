@@ -26,7 +26,7 @@ function game(e) {
     }
     nextMove = false;
     // ai move next(not working)
-    // bestMove();
+    bestMove();
   } else {
     // manual
     target.innerText = ai;
@@ -67,8 +67,8 @@ function bestMove() {
 
 // score ratings for maximizing player and minimizing player
 let scores = {
-  X: 1,
-  O: -1,
+  X: -1,
+  O: 1,
   tie: 0,
 };
 // minimax algorithm
