@@ -23,7 +23,8 @@ const board = document.querySelectorAll("li");
         winnerDisplay.innerText = "Tie Game!";
       } else {
         nextMove = false;
-        setTimeout(bestMove, 500); // Delay AI move for better user experience
+          bestMove();
+        // setTimeout(bestMove, 500); // Delay AI move for better user experience
       }
     }
 
@@ -34,7 +35,7 @@ const board = document.querySelectorAll("li");
       for (let i = 0; i < 9; i++) {
         if (board[i].innerText == "") {
           board[i].innerText = ai;
-          let score = minimax(board, 0, false);
+          let score = minimax(board, 3, false);
           board[i].innerText = "";
           if (score > bestScore) {
             bestScore = score;
@@ -62,7 +63,7 @@ const board = document.querySelectorAll("li");
 
     function minimax(board, depth, isMaximizing) {
       let result = checkWin();
-      if (result != null) {
+      if (result != null || depth == 0) {
         return scores[result];
       }
 
@@ -71,7 +72,7 @@ const board = document.querySelectorAll("li");
         for (let i = 0; i < 9; i++) {
           if (board[i].innerText == "") {
             board[i].innerText = human;
-            let score = minimax(board, depth + 1, false);
+            let score = minimax(board, depth - 1, false);
             board[i].innerText = "";
             bestScore = Math.max(score, bestScore);
           }
@@ -82,7 +83,7 @@ const board = document.querySelectorAll("li");
         for (let i = 0; i < 9; i++) {
           if (board[i].innerText == "") {
             board[i].innerText = ai;
-            let score = minimax(board, depth + 1, true);
+            let score = minimax(board, depth - 1, true);
             board[i].innerText = "";
             bestScore = Math.min(score, bestScore);
           }
