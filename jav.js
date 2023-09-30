@@ -12,6 +12,7 @@ board.forEach((spot) => {
 });
 
 function humanMove(e) {
+  if (checkWin() == human || checkWin() == ai) return;
   const target = e.target;
   if (nextMove) {
     if (target.innerText == "") {
@@ -21,7 +22,6 @@ function humanMove(e) {
       aiMove();
     }
   }
-  console.log(board.innerText);
 }
 
 // ai bestmove that uses minimax algorithm
@@ -31,7 +31,7 @@ function aiMove() {
   for (let i = 0; i < 9; i++) {
     if (board[i].innerText == "") {
       board[i].innerText = ai;
-      let score = minimax(board, 4, true);
+      let score = minimax(board, 1, true);
       board[i].innerText = "";
       if (score > bestScore) {
         bestScore = score;
@@ -67,6 +67,7 @@ function minimax(board, depth, isMaximizing) {
         bestScore = Math.max(score, bestScore);
       }
     }
+    console.log("max", bestScore);
     return bestScore;
   } else {
     let bestScore = Infinity;
@@ -78,6 +79,8 @@ function minimax(board, depth, isMaximizing) {
         bestScore = Math.min(score, bestScore);
       }
     }
+    console.log("min", bestScore);
+
     return bestScore;
   }
 }
@@ -124,14 +127,12 @@ function checkWin() {
 }
 
 function displayWinner(player) {
-  if (checkWin() == player) {
+  if (checkWin() === player) {
     winnerDisplay.innerText = `${player} wins`;
     return;
-  } else if (checkWin() == player) {
-    winnerDisplay.innerText = `${player} wins`;
-    return;
-  } else if (checkWin() == "tie") {
+  } else if (checkWin() === "tie") {
     winnerDisplay.innerText = "Tie";
     return;
   }
+  if (checkWin() == player || checkWin() == "tie") return;
 }
