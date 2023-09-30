@@ -44,7 +44,7 @@ function game(e) {
 // ai bestmove that uses minimax algorithm
 function bestMove() {
   var bestScore = -Infinity;
-  let move;
+  let move = -1;
   for (var i = 0; i < 9; i++) {
     if (board[i].innerText == "") {
       board[i].innerText = ai;
