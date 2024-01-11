@@ -19,7 +19,7 @@ function humanMove(e) {
       target.innerText = human;
       displayWinner(human);
       nextMove = false;
-      aiMove();
+      if(!nextMove) aiMove();
     }
   }
 }
