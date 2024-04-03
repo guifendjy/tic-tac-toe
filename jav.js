@@ -20,6 +20,8 @@ function reset() {
   });
   nextMove = true;
   winnerDisplay.innerText = "";
+
+  // re-initializes the board
   initBoard = ["", "", "", "", "", "", "", "", ""];
 }
 
