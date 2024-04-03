@@ -20,6 +20,7 @@ function reset() {
   });
   nextMove = true;
   winnerDisplay.innerText = "";
+  initBoard = ["", "", "", "", "", "", "", "", ""];
 }
 
 // // reset button
@@ -27,11 +28,9 @@ let isReset = false;
 const resetButton = document.getElementById("reset");
 resetButton.addEventListener("click", () => {
   if (isReset) resetButton.parentNode.style.display = "none";
+
   // reset the board
-  setTimeout(500, () => {
-    reset();
-    initBoard = ["", "", "", "", "", "", "", "", ""];
-  });
+  setTimeout(reset, 300);
 });
 
 // update UI
@@ -185,5 +184,10 @@ function checkGameStatus() {
 }
 
 function displayWinner(player) {
-  winnerDisplay.innerText = player === "tie" ? "tie ❌" : `${player} won 🎊`;
+  let message = {
+    tie: "tie ❌",
+    X: "you won ✅",
+    O: "you lost ❌ ",
+  };
+  winnerDisplay.innerText = message[player];
 }
