@@ -28,8 +28,10 @@ const resetButton = document.getElementById("reset");
 resetButton.addEventListener("click", () => {
   if (isReset) resetButton.parentNode.style.display = "none";
   // reset the board
-  reset();
-  initBoard = ["", "", "", "", "", "", "", "", ""];
+  setTimeout(500, () => {
+    reset();
+    initBoard = ["", "", "", "", "", "", "", "", ""];
+  });
 });
 
 // update UI
@@ -71,7 +73,7 @@ function aiMove(initBoard) {
         // a
         -Infinity,
         // ß
-        Infinity,
+        Infinity
       );
       initBoard[i] = "";
 
