@@ -20,8 +20,6 @@ function reset() {
   });
   nextMove = true;
   winnerDisplay.innerText = "";
-
-  // re-initializes the board
   initBoard = ["", "", "", "", "", "", "", "", ""];
 }
 
@@ -33,6 +31,8 @@ resetButton.addEventListener("click", () => {
 
   // reset the board
   setTimeout(reset, 300);
+  initBoard = ["", "", "", "", "", "", "", "", ""];
+  
 });
 
 // update UI
