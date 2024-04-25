@@ -1,9 +1,11 @@
 const board = document.querySelectorAll("li");
 const winnerDisplay = document.getElementById("winner");
+const resetButton = document.getElementById("reset");
 
 let nextMove = true;
 let human = "X";
 let ai = "O";
+let initBoard = Array(9).fill("");
 
 board.forEach((spot, index) => {
   spot.addEventListener("click", () => {
@@ -11,26 +13,29 @@ board.forEach((spot, index) => {
   });
 });
 
-let initBoard = ["", "", "", "", "", "", "", "", ""];
+function strikeWinPos(winningPositions) {
+  winningPositions &&
+    winningPositions.forEach(
+      (pos) => (board[pos].style.backgroundColor = "red")
+    );
+}
 
 // // reset the board
 function reset() {
   board.forEach((spot) => {
     spot.innerText = "";
+    spot.style.backgroundColor = "lightgray";
   });
   nextMove = true;
   winnerDisplay.innerText = "";
-  initBoard = ["", "", "", "", "", "", "", "", ""];
 }
 
 // // reset button
-let isReset = false;
-const resetButton = document.getElementById("reset");
 resetButton.addEventListener("click", () => {
-  if (isReset) resetButton.parentNode.style.display = "none";
-
+  showRestart(false);
   // reset the board
-  setTimeout(reset, 300);
+  setTimeout(reset, 500);
+  initBoard = Array(9).fill("");
 });
 
 // update UI
@@ -43,7 +48,8 @@ function updateUI() {
 // human goes first
 function humanMove(humanPlayerIndex) {
   if (!nextMove) return;
-  if (checkWin() == human || checkWin() == ai) return;
+  let { winner } = checkWin();
+  if (winner == human || winner == ai) return;
 
   if (nextMove) {
     if (initBoard[humanPlayerIndex] === "") {
@@ -58,6 +64,12 @@ function humanMove(humanPlayerIndex) {
   }
 }
 
+// I can memoize it by storing the previous
+// highest score and best move for ai, and
+//if there are not any other best move I then return
+// the memoized one, makes the ai less performant but
+//avoids searching for all possibilties(winning routes).
+
 // ai bestmove that uses minimax algorithm
 function aiMove(initBoard) {
   let bestScore = -Infinity;
@@ -67,7 +79,7 @@ function aiMove(initBoard) {
       initBoard[i] = ai;
       let score = minimax(
         initBoard,
-        initBoard.length,
+        9,
         false,
         // a
         -Infinity,
@@ -75,6 +87,7 @@ function aiMove(initBoard) {
         Infinity
       );
       initBoard[i] = "";
+      console.log(score);
 
       if (score > bestScore) {
         bestScore = score;
@@ -87,13 +100,12 @@ function aiMove(initBoard) {
   //update dom board
   updateUI();
   if (checkGameStatus()) return;
-
   nextMove = true;
 }
 
 // minimax algorithm
 function minimax(currentBoard, depth, isMaximizing, a, ß) {
-  let result = checkWin();
+  let { winner: result } = checkWin();
   if (result != null || depth == 0) {
     if (result == human) {
       return -10;
@@ -142,47 +154,60 @@ function minimax(currentBoard, depth, isMaximizing, a, ß) {
 
 // check if someone wins and return true
 function checkWin() {
+  let state = { winner: null, winPositions: null };
   let winPositions = [
+    //horizontal
     [0, 1, 2],
     [3, 4, 5],
     [6, 7, 8],
+    //vertical
     [0, 3, 6],
     [1, 4, 7],
     [2, 5, 8],
+    //diagonal
     [0, 4, 8],
     [2, 4, 6],
   ];
   for (let i = 0; i < winPositions.length; i++) {
     // goes through every win postion and check for win
-    let [firstSpot, secondSpot, thirdSpot] = winPositions[i];
+    let [a, b, c] = winPositions[i];
     if (
-      initBoard[firstSpot] == initBoard[secondSpot] &&
-      initBoard[firstSpot] == initBoard[thirdSpot] &&
-      initBoard[firstSpot] != ""
+      initBoard[a] == initBoard[b] &&
+      initBoard[a] == initBoard[c] &&
+      initBoard[a] != ""
     ) {
-      return initBoard[firstSpot];
+      state = { winner: initBoard[a], winPositions: [a, b, c] };
+      return state;
     }
   }
 
-  if (!initBoard.includes("")) {
-    return "tie";
-  }
-
   // if no one wins
-  return null;
+  if (!initBoard.includes("")) {
+    state.winner = "tie";
+    return state;
+  }
+  // no winner yet
+  return state;
 }
 
+// checks the game status
 function checkGameStatus() {
-  let winner = checkWin();
+  let { winner, winPositions } = checkWin();
   if (winner) {
     displayWinner(winner);
-    isReset = true;
-    resetButton.parentNode.style.display = "block";
+    strikeWinPos(winPositions);
+    showRestart(true);
     return true;
   }
   return false;
 }
 
+// restart button alert
+function showRestart(state) {
+  resetButton.parentNode.style.display = state ? "block" : "none";
+}
+
+// displays winner
 function displayWinner(player) {
   let message = {
     tie: "tie ❌",
