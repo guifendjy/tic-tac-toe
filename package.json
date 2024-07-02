@@ -4,11 +4,16 @@
   "description": "A 2 player tic tac toe game I tried to make an AI using the minimax algorithm but It's not working, it's not acting right. the code is still in the jav.js file but it's not in use. any suggestion is welcome.",
   "main": "main.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npm run open-browser && nodemon server.js",
+    "open-browser": "open http://localhost:5000"
   },
-  "author": "",
+  "author": "Dads Guifendjy, PAUL",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }

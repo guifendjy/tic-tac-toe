@@ -1,0 +1,519 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-size: 1.215rem;
+  font-weight: 400;
+  font-family: "Ubuntu Sans", sans-serif;
+}
+
+/* top and left values are a little off ill play around with them and see */
+:root {
+  --cell-square-hw: 300px;
+  --cell-size: calc(var(--cell-square-hw) / 3);
+  --mark-size: calc(var(--cell-size) * 0.9);
+  --row-width: 100%;
+  --row-height: 15px;
+
+  --column-width: 15px;
+  --column-height: 100%;
+  /* x: width || height;;; */
+  /* x/6 */
+  --xy-axis-1: calc(var(--cell-size) * 0.42);
+  /* x/2 */
+  --xy-axis-2: calc(var(--cell-size) * 1.42);
+  /* 5*x/6 */
+  --xy-axis-3: calc(var(--cell-size) * 2.42);
+
+  --diagonal-width: 120%;
+  --diagonal-height: 15px;
+  --diagonal-x-axis: 50%;
+  /*  */
+  --border-color: white;
+  --container-background-color: rgb(104, 28, 196);
+  --strike-color: yellow;
+  --font-color: white;
+  --box-shadow: 0px 5px 10px 0px rgba(116, 112, 112, 0.753);
+}
+html {
+  height: -webkit-fill-available;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+body {
+  height: 100vh;
+  background: linear-gradient(135deg, #8052ec, #d161ff);
+  backdrop-filter: blur(10px);
+  height: -webkit-fill-available;
+}
+
+::placeholder {
+  color: white;
+  opacity: 1; /* Firefox */
+}
+img {
+  width: 100px;
+  height: 100px;
+  border-radius: 5%;
+}
+.img-container {
+  display: flex;
+  gap: 1em;
+}
+
+img.avatar:hover {
+  border: 3px solid var(--strike-color);
+  transform: scale(1.1);
+  transition: ease-out 0.4s;
+}
+
+.active {
+  border: 5px solid var(--strike-color);
+  box-shadow: var(--box-shadow);
+}
+
+.hide {
+  display: none !important;
+}
+
+.content-container {
+  max-width: 500px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.reset-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: rgb(104, 28, 196, 0.9);
+  backdrop-filter: blur(0.9px);
+  z-index: 999;
+}
+
+.reset-container svg {
+  margin-left: 0.4em;
+}
+/* aplies to all svgs */
+svg {
+  fill: inherit;
+  width: 20px;
+  height: 20px;
+}
+
+.btn {
+  padding: 0.5em 1em;
+  font-size: 1.2rem;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 2px solid #fff;
+  color: #fff;
+  fill: #fff;
+  background-color: transparent;
+  text-align: center;
+}
+
+.btn:hover {
+  background-color: white;
+  scale: 1.11;
+  color-scheme: dark;
+  color: var(--container-background-color);
+  fill: var(--container-background-color);
+  transition: 0.5s;
+}
+
+/* active */
+.btn.on {
+  background-color: white;
+  color-scheme: dark;
+  color: var(--container-background-color);
+  fill: var(--container-background-color);
+}
+
+/* input */
+.radio-label {
+  font-size: 1rem;
+  font-weight: 500;
+  white-space: nowrap;
+  display: grid;
+  grid-template-columns: 1em auto;
+  gap: 0.4em;
+  color: var(--font-color);
+}
+.radio-label:focus-within {
+  color: var(--strike-color);
+}
+
+input[type="radio"] {
+  /* Add if not using autoprefixer */
+  -webkit-appearance: none;
+  /* Remove most all native input styles */
+  appearance: none;
+  /* For iOS < 15 */
+  /* background-color: var(--form-background); */
+  /* Not removed via appearance */
+  margin: 0;
+
+  font: inherit;
+  color: currentColor;
+  width: 1.1em;
+  height: 1.1em;
+  border: 0.15em solid white;
+  border-radius: 50%;
+
+  display: grid;
+  place-content: center;
+}
+input[type="radio"]::before {
+  content: "";
+  width: 0.75em;
+  height: 0.75em;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  /* Windows High Contrast Mode */
+  background-color: yellow;
+}
+
+input[type="radio"]:checked::before {
+  transform: scale(1);
+}
+
+.container {
+  background-color: var(--container-background-color);
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  min-height: 70%;
+}
+
+.container h3 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+  padding-bottom: 0.9em;
+  margin-bottom: 0.4em;
+  border-bottom: 2px solid var(--border-color);
+  color: var(--strike-color);
+}
+
+.player-info {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: auto auto;
+  gap: 0.3em;
+}
+
+.player-info:first-child {
+  grid-template-areas:
+    "img name"
+    "img score"
+    "mark mark";
+}
+.player-info:last-child {
+  grid-template-areas:
+    "name img"
+    "score img";
+}
+
+.player-info img {
+  grid-area: img;
+}
+.player-info .score {
+  grid-area: score;
+}
+.player-info .gametag {
+  grid-area: name;
+}
+.player-info .mark {
+  grid-area: mark;
+  grid-column: 1/-1;
+}
+
+#winner {
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 600;
+  margin-bottom: 0.3em;
+  z-index: 1;
+}
+
+ul {
+  position: relative;
+  width: var(--cell-square-hw);
+  height: var(--cell-square-hw);
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+ul li {
+  /* background-color: #fff */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
+  cursor: pointer;
+  border-right: 2px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color);
+}
+
+ul li:nth-child(3),
+ul li:nth-child(6),
+ul li:nth-child(9) {
+  border-right: none;
+}
+ul li:nth-child(7),
+ul li:nth-child(8),
+ul li:nth-child(9) {
+  border-bottom: none;
+}
+/* ====== X =====*/
+li.x::before,
+li.x::after {
+  content: "";
+  position: absolute;
+  width: calc(var(--mark-size) * 0.15);
+  height: var(--mark-size);
+  background-color: #fff;
+}
+
+li.x::before {
+  transform: rotate(45deg);
+}
+li.x::after {
+  transform: rotate(-45deg);
+}
+
+/* ===== O ====== */
+li.circle::before,
+li.circle::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(255, 68, 0, 0.776);
+}
+
+li.circle::before {
+  width: var(--mark-size);
+  height: var(--mark-size);
+}
+li.circle::after {
+  width: calc(var(--mark-size) * 0.7);
+  height: calc(var(--mark-size) * 0.7);
+  background-color: var(--container-background-color);
+}
+
+.strike {
+  position: absolute;
+  background-color: var(--strike-color);
+}
+
+.strike-row-1 {
+  width: var(--row-width);
+  height: var(--row-height);
+  top: var(--xy-axis-1);
+}
+.strike-row-2 {
+  width: var(--row-width);
+  height: var(--row-height);
+  top: var(--xy-axis-2);
+}
+.strike-row-3 {
+  width: var(--row-width);
+  height: var(--row-height);
+  top: var(--xy-axis-3);
+}
+.strike-column-1 {
+  height: var(--column-height);
+  width: var(--column-width);
+  left: var(--xy-axis-1);
+}
+.strike-column-2 {
+  height: var(--column-height);
+  width: var(--column-width);
+  left: var(--xy-axis-2);
+}
+.strike-column-3 {
+  height: var(--column-height);
+  width: var(--column-width);
+  left: var(--xy-axis-3);
+}
+.strike-diagonal-1 {
+  width: var(--diagonal-width);
+  height: var(--diagonal-height);
+  top: calc((var(--cell-square-hw) - var(--diagonal-height)) / 2);
+  left: -30px;
+  transform: rotate(45deg);
+}
+.strike-diagonal-2 {
+  width: var(--diagonal-width);
+  height: var(--diagonal-height);
+  top: calc((var(--cell-square-hw) - var(--diagonal-height)) / 2);
+  left: -35px;
+  transform: rotate(-45deg);
+}
+
+#loading,
+#inner-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;
+  height: 10px;
+  border-radius: 5px;
+}
+.loading-message {
+  text-align: center;
+  position: inherit;
+  top: 0;
+  padding: 1em;
+}
+
+#loading {
+  border: 1px solid white;
+}
+
+#inner-loading {
+  background-color: yellow;
+  animation: progress 1.3s linear infinite;
+}
+
+@keyframes progress {
+  0% {
+    width: 0;
+    left: 0;
+  }
+  50% {
+    width: 75px;
+  }
+  100% {
+    width: 150px;
+  }
+}
+
+/* messages */
+.msg {
+  display: flex;
+  align-items: end;
+  gap: 0.3em;
+  padding-bottom: 10px;
+  width: 100%;
+}
+.chat-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.msg.left {
+  justify-content: flex-start;
+}
+
+.msg.right {
+  justify-content: flex-end;
+}
+
+.left .msg-bubble {
+  background-color: #f0f0f0;
+  color: black;
+}
+
+.right .msg-bubble {
+  background-color: var(--container-background-color);
+  color: white;
+}
+
+.msg-bubble {
+  min-width: 150px;
+  min-height: 50px;
+  max-width: 50%;
+  padding: 0.4em;
+  line-height: normal;
+  background-color: inherit;
+  border-radius: 5px;
+  word-wrap: break-word;
+  word-break: keep-all;
+  padding: 0.5em;
+
+  .msg-content,
+  .msg-time {
+    color: inherit;
+  }
+
+  .msg-content {
+    font-size: 1rem;
+  }
+
+  .msg-time {
+    font-size: 0.7rem;
+    text-align: end;
+  }
+}
+
+.message-input::placeholder {
+  color: gray;
+}
+
+.send-btn {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  outline: 2px solid gray;
+  fill: gray;
+  padding: 0.2em;
+  width: 30px;
+  height: 30px;
+}
+
+.send-btn:hover {
+  fill: white;
+  background-color: var(--container-background-color);
+  outline: none;
+}
+
+.new-message::before,
+.new-message::after {
+  position: absolute;
+  top: 50%;
+  left: 70%;
+  transform: translate(-50%, -50%);
+}
+
+.new-message::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background-color: blue;
+  border-radius: 50%;
+}
+
+.new-message::after {
+  content: "1";
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
