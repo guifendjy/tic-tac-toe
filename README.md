@@ -8,7 +8,7 @@ sept 30, 2023-- kinda fixed the ai but it's slow on the first move.
 july 2, 2024-- recreated the App, its dynamicly rendered on page load with javascript, 
 I implemented a server to handle websocket connections.
 I used Navigo for the front end router.
-your're welcom to fork it and try it out, any suggestions are welcome.
+your're welcome to fork it and try it out, any suggestions are welcome.
 
 - fork it,
 - open it on your machine
