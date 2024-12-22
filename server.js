@@ -84,9 +84,9 @@ io.on("connection", (socket) => {
         waitingPlayerQueue.enQueue(oponentID);
 
         // they get overriden but just to make sure(on matches)
-        delete Players[oponentID].oponent;
-        delete Players[oponentID].room;
-        delete Players[oponentID].mark;
+        // delete Players[oponentID].oponent;
+        // delete Players[oponentID].room;
+        // delete Players[oponentID].mark;
       } else {
         // if oponent is also disconnected
         waitingPlayerQueue.remove(oponentID);
@@ -289,5 +289,5 @@ app.get("/*", (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log("\nserver running at port: " + PORT + "\n");
+  console.log("\nserver running: http://localhost:" + PORT + "\n");
 });
