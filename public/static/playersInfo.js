@@ -14,6 +14,7 @@ export function PlayerInfoComponent(playersArray) {
   `;
   if (playersArray && playersArray.length == 2) {
     const APP_STATE = getState();
+
     let player =
       playersArray &&
       playersArray.find((player) => player.userID === APP_STATE?.userID);
@@ -22,8 +23,8 @@ export function PlayerInfoComponent(playersArray) {
       playersArray &&
       playersArray.find((player) => player.userID !== APP_STATE?.userID);
 
-    console.log("player: ", player?.userID);
-    console.log("oponent: ", oponent?.userID);
+    console.log("player: ", player?.userID, player);
+    console.log("oponent: ", oponent?.userID, oponent);
 
     [player, oponent].forEach((player, index) => {
       let playerIF = document.createElement("div");

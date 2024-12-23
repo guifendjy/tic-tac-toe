@@ -2,22 +2,16 @@
 import * as localStore from "./localSaver.js";
 
 export function validate(appstate) {
+  console.log(appstate);
   let error;
+
   // returns false if value is falsy(using it without the new keyword it doesn't work)
   switch (appstate.currentView) {
     case "landingview":
       if (!appstate.avatar || !appstate.gametag) {
         error = { valid: false, message: "avatar or username required " };
       } else {
-        // on validate true save userData(prevent from saving same user twice)
-        let users = localStore.getUsers();
-        if (users && users.some((user) => user.userID == appstate.userID))
-          return;
-        saveUserProfile({
-          avatar: appstate.avatar,
-          gametag: appstate.gametag,
-          userID: appstate.userID,
-        });
+        error = { valid: true };
       }
       break;
     case "choosegamemode":
@@ -27,14 +21,17 @@ export function validate(appstate) {
             valid: false,
             message: "mark or difficulty level required",
           };
+        } else {
+          error = { valid: true };
         }
+      } else {
+        error = { valid: true };
       }
       break;
     default:
       error = { valid: false, message: "something wrong occured" };
   }
-  if (!error) return { valid: true };
-  else return error;
+  return error;
 }
 
 // localSaving functionnalities

@@ -91,16 +91,18 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       const path = target.getAttribute("data-navigate");
       const state = getState();
-      let result = validate(path);
 
-      if (state.error == null || result.valid) {
-        Router.navigate(path);
-      } else {
-        state.error = result.message;
+      let result = validate(state);
+
+      if (!result.valid || state.error) {
+        if (result.message) state.error = result.message;
         import("./error.js").then(({ error }) => {
           App.appendChild(error(state.error));
         });
+        return;
       }
+
+      Router.navigate(path);
     }
   });
 });

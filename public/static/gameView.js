@@ -43,6 +43,8 @@ export function gamingView(mode, socket, playersInfos) {
 
   if (mode == "ai") {
     const APP_STATE = getState();
+
+    console.log(APP_STATE);
     let humanAi = [
       {
         avatar: APP_STATE?.avatar,
@@ -58,6 +60,7 @@ export function gamingView(mode, socket, playersInfos) {
         userID: null,
       },
     ];
+
     const Infos = PlayerInfoComponent(humanAi);
     const board = Board();
     contentContainer.append(Infos, board);

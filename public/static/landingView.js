@@ -1,6 +1,13 @@
 import { profiles } from "./profiles.js";
-const avatars = ["anime", "vampire", "assassin"];
+import { getState, updateSTATE } from "./state.js";
 
+import {
+  createUserProfile as saveUserProfile,
+  getUsers,
+  deleteUserProfile as deleteProfile,
+} from "./utils/localSaver.js";
+
+const avatars = ["anime", "vampire", "assassin"];
 
 // landingview component
 // VIEW 1
@@ -41,7 +48,7 @@ export function landingView() {
     avatarImg.alt = name;
 
     avatarImg.classList.add("avatar");
-    imgContainer.appendChild( );
+    imgContainer.appendChild(avatarImg);
   });
   fragment.appendChild(imgContainer);
 
@@ -49,22 +56,25 @@ export function landingView() {
 
   imgContainer.onclick = (e) => selectAvatar(e);
 
-  // button
-  let Next = document.createElement("button");
-  Next.className = "btn";
-  Next.textContent = "Next";
-  Next.setAttribute("data-navigate", "/gamemode");
-  fragment.appendChild(Next);
-
-  // render on page
   AvatarContainer.appendChild(fragment);
+
   return AvatarContainer;
 }
 
 // landingview component
-function renderGameTagInput(container) {
+function inputs() {
+  let div = document.createElement("div");
+  div.id = "inputs-container";
+
+  div.style = `
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content:center;
+  align-item: center;
+  gap: .6em;`;
+
   let gameTagInput = document.createElement("input");
-  gameTagInput.id = "game-tag";
   gameTagInput.placeholder = "enter username";
   gameTagInput.style = `
                     padding: .3em;
@@ -74,15 +84,77 @@ function renderGameTagInput(container) {
                     background: none;
                     color: white;
                     `;
+
   gameTagInput.onchange = (e) => {
-    console.log(e.target.value);
+    const value = e.target.value;
+
     // updates gameTagInput
-    APP_STATE.gametag = e.target.value;
-    APP_STATE.userID = APP_STATE.gametag + Date.now();
-    console.log("gametag: ", APP_STATE.gametag, "userID: ", APP_STATE.userID);
+    let gametag = value;
+    let userID = getState().gametag + Date.now();
+
+    updateSTATE((prev) => ({ ...prev, gametag, userID }));
+    console.log("gametag: ", gametag, "userID: ", userID);
   };
 
-  container.insertAdjacentElement("afterend", gameTagInput);
+  let saveContainer = document.createElement("div");
+  saveContainer.style = `
+  text-align: center;
+  display: flex;
+  flex-direction:center;
+  justify-content:center;
+  gap: .3em;
+  color: white;
+  `;
+
+  let save = document.createElement("input");
+  save.type = "checkbox";
+  save.id = "save-user";
+
+  save.onchange = (e) => {
+    updateSTATE((prev) => ({ ...prev, save: e.target.value }));
+  };
+
+  let label = document.createElement("label");
+  label.textContent = "save this user";
+  label.htmlFor = "save-user";
+  label.style = `
+  font-size: .7rem`;
+
+  saveContainer.append(save, label);
+
+  // button
+  let Next = document.createElement("button");
+  Next.className = "btn";
+  Next.textContent = "Next";
+
+  Next.onclick = () => {
+    if (gameTagInput.value != "") {
+      const users = getUsers();
+      const appstate = getState();
+
+      if (users && users.some((user) => user.gametag == appstate.gametag)) {
+        updateSTATE((prev) => ({ ...prev, error: "user already exist..." }));
+        return;
+      }
+
+      if (appstate.save) {
+        saveUserProfile({
+          avatar: appstate.avatar,
+          gametag: appstate.gametag,
+          userID: appstate.userID,
+        });
+        console.log("will be saved");
+      }
+      updateSTATE((prev) => ({ ...prev, error: null }));
+    }
+  };
+
+  Next.setAttribute("data-navigate", "/gamemode");
+
+  // add to div
+  div.append(gameTagInput, saveContainer, Next);
+  // render on page
+  return div;
 }
 
 // onclick event to select avatar(from landingview view)
@@ -92,16 +164,21 @@ function selectAvatar(e) {
   if (target.matches("img")) {
     if (parentELements.some((el) => el.classList.contains("active"))) {
       parentELements.forEach((el) => el.classList.remove("active"));
-      document.getElementById("game-tag").remove();
+      document.getElementById("inputs-container").remove();
     }
     target.classList.add("active");
     let showGametagInput = e.target.classList.contains("active");
+
     if (showGametagInput) {
-      renderGameTagInput(target.parentNode);
+      let div = inputs(); // this keeps creating duplicates
+      target.parentNode.parentNode.insertBefore(
+        div,
+        target.parentNode.nextSibling
+      );
     }
     // save the person's avatar here(use localstorage use the functions from mathmind to manipulate LS)
     console.log(e.target.id);
     // update avatar
-    APP_STATE.avatar = e.target.id;
+    updateSTATE((prev) => ({ ...prev, avatar: e.target.id }));
   }
 }

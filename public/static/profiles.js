@@ -26,9 +26,8 @@ export function profiles() {
     allUsers.forEach((user) => {
       let div = document.createElement("div");
       div.style = `text-align: center;`;
-      div.id = `${user.userID}`;
       div.innerHTML = `
-          <img style="width: 60px; height: 60px; border-radius: 50%" src="static/assets/${user.avatar}.jpeg" alt="avatar"/>
+          <img id='${user.userID}' style="width: 60px; height: 60px; border-radius: 50%" src="static/assets/${user.avatar}.jpeg" alt="avatar"/>
           <p style="color: yellow; font-size: .78rem;">${user.gametag}</p>
       `;
       profileContainer.append(div);
@@ -36,7 +35,7 @@ export function profiles() {
   profileContainer.onclick = (e) => {
     const target = e.target;
     if (target.matches("img") || target.matches("p")) {
-      const ID = target.parentNode.id;
+      const ID = target.id;
       let data = localStore.getUserData({ userID: ID });
       const APP_STATE = getState();
 
@@ -48,7 +47,6 @@ export function profiles() {
       });
 
       target.setAttribute("data-navigate", "/gamemode");
-      console.log(target);
     }
   };
   return allUsers ? profileContainer : null;

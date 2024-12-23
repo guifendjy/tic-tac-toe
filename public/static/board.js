@@ -149,7 +149,7 @@ export function init(mode, socket, current, playersArr) {
     } else if (gameMode == "multiplayer") {
       console.log("initializing move...");
       currentPlayer = current;
-      playersInfos = playersArr;
+      playersInfos == null && (playersInfos = playersArr); // initial state
 
       playerTurn.textContent = `${currentPlayer}'s move`;
     }
@@ -167,7 +167,7 @@ export function init(mode, socket, current, playersArr) {
       socket.emit("restart", {
         winner: winner,
         reset: true,
-        playersInfos: playersInfos,
+        playersInfos,
       });
 
       // avoid double click and reset game by same player(might find a way to do it on the server too)
@@ -209,6 +209,8 @@ export function init(mode, socket, current, playersArr) {
         showRestart(false);
         setTimeout(reset, 500);
 
+        playersInfos = data.players;
+
         // reenable game(&update score &playersI)
         const APP_STATE = getState();
 
@@ -222,7 +224,6 @@ export function init(mode, socket, current, playersArr) {
         score[1].textContent = `score: ${oponent.score}`;
 
         currentPlayer = data.first;
-        playersInfos = data.players;
       }
     });
 
